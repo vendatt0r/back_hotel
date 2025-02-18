@@ -2,36 +2,32 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import extend_schema
-
+from .models import User, Room, Booking
 from .serializers import UserSerializer, RoomSerializer, BookingSerializer, PaymentSerializer, ReviewSerializer, CategorySerializer
-
+from django.shortcuts import get_object_or_404
 class UserView(APIView):
-    @extend_schema(
-        summary="Получение списка пользователей",
-        description="Возвращает список всех пользователей.",
-        responses={200: UserSerializer(many=True)}
-    )
+    @extend_schema(summary="Получение списка пользователей", responses={200: UserSerializer(many=True)})
     def get(self, request):
-        return Response([], status=status.HTTP_200_OK)
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class RoomView(APIView):
-    @extend_schema(
-        summary="Получение списка номеров",
-        description="Возвращает список всех номеров отеля.",
-        responses={200: RoomSerializer(many=True)}
-    )
+    @extend_schema(summary="Получение списка номеров", responses={200: RoomSerializer(many=True)})
     def get(self, request):
-        return Response([], status=status.HTTP_200_OK)
+        rooms = Room.objects.all()
+        serializer = RoomSerializer(rooms, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class RoomDetailView(APIView):
-    @extend_schema(
-        summary="Получение информации о номере",
-        description="Возвращает данные конкретного номера.",
-        responses={200: RoomSerializer}
-    )
+    @extend_schema(summary="Получение информации о номере", responses={200: RoomSerializer})
     def get(self, request, room_id):
-        return Response({"id": room_id}, status=status.HTTP_200_OK)
+        room = get_object_or_404(Room, id=room_id)
+        serializer = RoomSerializer(room)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class CategoryView(APIView):
     @extend_schema(
@@ -52,48 +48,41 @@ class CategoryDetailView(APIView):
         return Response({"id": category_id}, status=status.HTTP_200_OK)
 
 class BookingView(APIView):
-    @extend_schema(
-        summary="Получение списка бронирований",
-        description="Возвращает список всех бронирований.",
-        responses={200: BookingSerializer(many=True)}
-    )
+    @extend_schema(summary="Получение списка бронирований", responses={200: BookingSerializer(many=True)})
     def get(self, request):
-        return Response([], status=status.HTTP_200_OK)
+        bookings = Booking.objects.all()
+        serializer = BookingSerializer(bookings, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @extend_schema(
-        summary="Создание бронирования",
-        description="Создает новое бронирование.",
-        request=BookingSerializer,
-        responses={201: BookingSerializer}
-    )
+    @extend_schema(summary="Создание бронирования", request=BookingSerializer, responses={201: BookingSerializer})
     def post(self, request):
-        return Response(request.data, status=status.HTTP_201_CREATED)
+        serializer = BookingSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BookingDetailView(APIView):
-    @extend_schema(
-        summary="Получение информации о бронировании",
-        description="Возвращает данные конкретного бронирования.",
-        responses={200: BookingSerializer}
-    )
+    @extend_schema(summary="Получение информации о бронировании", responses={200: BookingSerializer})
     def get(self, request, booking_id):
-        return Response({"id": booking_id}, status=status.HTTP_200_OK)
+        booking = get_object_or_404(Booking, id=booking_id)
+        serializer = BookingSerializer(booking)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @extend_schema(
-        summary="Обновление бронирования",
-        description="Обновляет информацию о бронировании.",
-        request=BookingSerializer,
-        responses={200: BookingSerializer}
-    )
+    @extend_schema(summary="Обновление бронирования", request=BookingSerializer, responses={200: BookingSerializer})
     def put(self, request, booking_id):
-        return Response(request.data, status=status.HTTP_200_OK)
+        booking = get_object_or_404(Booking, id=booking_id)
+        serializer = BookingSerializer(booking, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @extend_schema(
-        summary="Удаление бронирования",
-        description="Удаляет бронирование.",
-        responses={204: None}
-    )
+    @extend_schema(summary="Удаление бронирования", responses={204: None})
     def delete(self, request, booking_id):
+        booking = get_object_or_404(Booking, id=booking_id)
+        booking.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

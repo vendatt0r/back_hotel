@@ -42,7 +42,10 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'drf_spectacular',
     'djoser',
+    'app',
 ]
+AUTH_USER_MODEL = 'app.User'
+
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -53,6 +56,9 @@ REST_FRAMEWORK = {
 DJOSER = {
     "LOGIN_FIELD": "username",
     "USE_SESSION_AUTH": True,
+    'SERIALIZERS': {
+        'user_create': 'djoser.serializers.UserCreateSerializer',
+    },
 }
 
 
