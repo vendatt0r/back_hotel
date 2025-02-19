@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from rest_framework import serializers
 from .models import User, Room, Booking
 
 class UserSerializer(serializers.ModelSerializer):
@@ -21,8 +20,10 @@ class BookingSerializer(serializers.ModelSerializer):
 class PaymentSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     booking_id = serializers.IntegerField()
-    amount = serializers.FloatField()
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
     status = serializers.CharField()
+    create_at = serializers.DateTimeField()
+    paid_at = serializers.DateTimeField()
 
 class ReviewSerializer(serializers.Serializer):
     id = serializers.IntegerField()

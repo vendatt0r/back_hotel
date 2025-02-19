@@ -5,6 +5,7 @@ from drf_spectacular.utils import extend_schema
 from .models import User, Room, Booking
 from .serializers import UserSerializer, RoomSerializer, BookingSerializer, PaymentSerializer, ReviewSerializer, CategorySerializer
 from django.shortcuts import get_object_or_404
+
 class UserView(APIView):
     @extend_schema(summary="Получение списка пользователей", responses={200: UserSerializer(many=True)})
     def get(self, request):
