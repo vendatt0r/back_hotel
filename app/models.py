@@ -21,8 +21,10 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+    
     def get_room_count(self):
         return self.rooms.count()
+    
     def has_available_rooms(self):
         return self.rooms.filter(status="available").exists()
 
@@ -35,8 +37,8 @@ class Room(models.Model):
 
     def __str__(self):
         return f"Room {self.id} - {self.status}"
-    def is_available(self):
-        return self.status == "available"
+    #def is_available(self):
+        #return self.status == "available"
 
 class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookings")
@@ -47,10 +49,6 @@ class Booking(models.Model):
 
     def __str__(self):
         return f"Booking {self.id} ({self.status})"
-    
-    def cancel_booking(self):
-        self.status = "canceled"
-        self.save()
 
 class Payment(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name="payments")
@@ -63,11 +61,6 @@ class Payment(models.Model):
     
     def __str__(self):
         return f"Payment {self.id} - {self.status} ({self.amount} RUB)"
-    
-    def mark_as_paid(self):
-        self.status = "paid"
-        self.paid_at = timezone.now()
-        self.save()
 
 class Review(models.Model):
     id = models.AutoField(primary_key=True)
