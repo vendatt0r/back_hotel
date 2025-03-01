@@ -3,13 +3,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import extend_schema
 from .models import User, Room, Booking
-from .serializers import UserSerializer, RoomSerializer, BookingSerializer, PaymentSerializer, ReviewSerializer, CategorySerializer
+from .serializers import CustomUserSerializer, RoomSerializer, BookingSerializer, PaymentSerializer, ReviewSerializer, CategorySerializer
 from django.shortcuts import get_object_or_404
 class UserView(APIView):
-    @extend_schema(summary="Получение списка пользователей", responses={200: UserSerializer(many=True)})
+    @extend_schema(summary="Получение списка пользователей", responses={200: CustomUserSerializer(many=True)})
     def get(self, request):
         users = User.objects.all()
-        serializer = UserSerializer(users, many=True)
+        serializer = CustomUserSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
