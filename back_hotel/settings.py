@@ -52,7 +52,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ]
 }
-#        'rest_framework.authentication.TokenAuthentication',
+
 DJOSER = {
     "LOGIN_FIELD": "username",
     "USE_SESSION_AUTH": True,

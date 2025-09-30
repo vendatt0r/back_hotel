@@ -79,6 +79,7 @@ class Review(models.Model):
     def short_comment(self):
         return self.comment[:50] + "..." if len(self.comment) > 50 else self.comment
     
+    @classmethod
     def get_reviews_in_period(cls, start_date, end_date):
         return cls.objects.filter(created_at__range=[start_date, end_date])
 
